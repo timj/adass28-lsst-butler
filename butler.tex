@@ -1,0 +1,91 @@
+% This is the ADASS_template.tex LaTeX file, 26th August 2016.
+% It is based on the ASP general author template file, but modified to reflect the specific
+% requirements of the ADASS proceedings.
+% Copyright 2014, Astronomical Society of the Pacific Conference Series
+% Revision:  14 August 2014
+
+% To compile, at the command line positioned at this folder, type:
+% latex ADASS_template
+% latex ADASS_template
+% dvipdfm ADASS_template
+% This will create a file called aspauthor.pdf.}
+
+\documentclass[11pt,twoside]{article}
+
+% Do NOT use ANY packages other than asp2014.
+\usepackage{asp2014}
+
+\aspSuppressVolSlug
+\resetcounters
+
+% References must all use BibTeX entries in a .bibfile.
+% References must be cited in the text using \citet{} or \citep{}.
+% Do not use \cite{}.
+% See ManuscriptInstructions.pdf for more details
+\bibliographystyle{asp2014}
+
+% The ``markboth'' line sets up the running heads for the paper.
+% 1 author: "Surname"
+% 2 authors: "Surname1 and Surname2"
+% 3 authors: "Surname1, Surname2, and Surname3"
+% >3 authors: "Surname1 et al."
+% Replace ``Short Title'' with the actual paper title, shortened if necessary.
+% Use mixed case type for the shortened title
+% Ensure shortened title does not cause an overfull hbox LaTeX error
+% See ASPmanual2010.pdf 2.1.4  and ManuscriptInstructions.pdf for more details
+\markboth{Jenness et al.}{Abstract data access at LSST}
+
+\begin{document}
+
+\title{Abstracting the storage and retrieval of image data at the LSST}
+
+% Note the position of the comma between the author name and the
+% affiliation number.
+% Author names should be separated by commas.
+% The final author should be preceded by "and".
+% Affiliations should not be repeated across multiple \affil commands. If several
+% authors share an affiliation this should be in a single \affil which can then
+% be referenced for several author names.
+% See ManuscriptInstructions.pdf and ASPmanual2010.pdf 3.1.4 for more details
+\author{Tim~Jenness$^1$,
+James~F.~Bosch$^2$,
+Pim~Schellart$^2$,
+Kian-Tat~Lim$^3$,
+Andy~Salnikov$^3$,
+Michelle~Gower$^4$
+\affil{$^1$Large Synoptic Survey Telescope, Tucson, AZ, USA; \email{tjenness@lsst.org}}
+\affil{$^2$Princeton University, Princeton, NJ, USA}
+\affil{$^3$SLAC National Laboratory, Menlo Park, CA, USA}
+\affil{$^4$National Center for Supercomputing Applications, Urbana, IL, USA}
+}
+
+% This section is for ADS Processing.  There must be one line per author.
+\paperauthor{Tim~Jenness}{tjenness@lsst.org}{0000-0001-5982-167X}{LSST}{Data Management}{Tucson}{AZ}{85719}{U.S.A.}
+\paperauthor{James~Bosch}{jbosch@astro.princeton.edu}{0000-0003-2759-5764}{Princeton University}{Department of Astrophysical Sciences}{Princeton}{NJ}{08544}{U.S.A.}
+\paperauthor{Pim~Schellart}{}{0000-0002-8324-0880}{Princeton University}{Department of Astrophysical Sciences}{Princeton}{NJ}{08544}{U.S.A.}
+\paperauthor{K-T~Lim}{ktl@slac.stanford.edu}{0000-0002-6338-6516}{SLAC}{}{Menlo Park}{CA}{94025}{U.S.A.}
+\paperauthor{Andy~Salnikov}{salnikov@slac.stanford.edu}{}{SLAC}{}{Menlo Park}{CA}{94025}{U.S.A.}
+\paperauthor{Michelle~Gower}{mgower@illinois.edu}{}{NCSA}{}{Urbana}{IL}{}{U.S.A.}
+
+
+\begin{abstract}
+  Writing generic data processing pipelines requires that the algorithmic code does not ever have to know about data formats of files, or the locations of those files.
+  At LSST we have a software system known as ``the Butler,'' that abstracts these details from the software developer.
+  Scientists can specify the dataset they want in terms they understand, such as filter, observation id, date of observation, and instrument name, and the Butler translates that to one or more files which are read and returned to them as a single Python object.
+  Conversely, once they have finished processing the dataset they can give it back to the Butler, with a label describing its new status, and the butler can write it in whatever format it has been configured to use.
+  The Butler system is not LSST-specific and is entirely driven by external configuration to suit a specific use case.
+  In this paper we describe the core features of the Butler and the associated architecture.
+\end{abstract}
+
+\section{Introduction}
+
+
+
+\section{Summary}
+
+\acknowledgements This material is based upon work supported in part by the National Science Foundation through Cooperative Agreement 1258333 managed by the Association of Universities for Research in Astronomy (AURA), and the Department of Energy under Contract No. DE-AC02-76SF00515 with the SLAC National Accelerator Laboratory.
+Additional LSST funding comes from private donations, grants to universities, and in-kind support from LSSTC Institutional Members.
+
+\bibliography{butler}  % For BibTex
+
+\end{document}
