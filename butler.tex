@@ -79,7 +79,37 @@ Michelle~Gower$^4$
 
 \section{Introduction}
 
+\section{Butler Components}
 
+The Butler consists of  three core components: Schema, Registry access, and Datastore.
+The schema defines the data model for relating datasets to each other.
+This allows you to ask which datasets do I need to calibrate this one, or which datasets were taken with this filter between these dates.
+The registry classes allow the data model to be queried and are configurable via plugins to allow different backend representations of the data.
+Finally the Datastore deals with the reading and writing of datasets themselves.
+There are datastores for a POSIX file system, an in-memory cache, and chained datastores (where writes go to all datastores and reads pull from the first datastore to return it).
+We intend to soon add support for object stores.
+To support the datastores ``Formatters'' have to be written to serialize and deserialize Python objects.
+
+\section{Data Model}
+
+The Butler  data model is designed to understand the relationships between observations and calibrations, but also the how the sky can be segmented into different regions.
+Each observation is linked to corresponding patches on the sky map.
+These are used to easily get an answer to the question of which datasets should be included for a coadd of a particular sky region.
+
+\section{Using the Butler}
+
+The Butler maps a Python object to a serialization format through a ``StorageClass'' defined in the YAML configuration files.
+Changing the serialization format from FITS to HDF5 does not require any code changes for the user.
+Below is some user code for retrieving a calibrated exposure of an HSC observation, modifying it, and then storing a new version with a different dataset type name.
+Pre-defined components, such as the WCS solution, can be retrieved without reading the full dataset if supported by the formatter.
+
+\section{Header Translation}
+
+In order to be able to ingest instrument data into a Butler repository the Butler has to understand some properties of the instrument including filters, detector information, and how to extract data units from data headers.
+We have written a separate Python package, obs\_metadata, to support header translation and metadata extraction for astronomical instrument headers.
+New translators must be written to allow the Butler to understand data during ingest.
+Currently translators exist for DECam, CFHT MegaPrime, and SuprimeCam and Hyper-SuprimeCam from Subaru.
+This package solely depends on Astropy and does not need any LSST infrastructure.
 
 \section{Summary}
 
