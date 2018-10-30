@@ -103,6 +103,23 @@ Changing the serialization format from FITS to HDF5 does not require any code ch
 Below is some user code for retrieving a calibrated exposure of an HSC observation, modifying it, and then storing a new version with a different dataset type name.
 Pre-defined components, such as the WCS solution, can be retrieved without reading the full dataset if supported by the formatter.
 
+\begin{quote}
+\begin{small}
+\begin{verbatim}
+from lsst.daf.butler import Butler
+
+butler = Butler("config.yaml")
+
+dataId = {"instrument": "HSC", "obsid": "HSCA04090000"}
+calibrated = butler.get("calexp", dataId)
+warped = doWarp(calibrated)
+butler.put(warped, "warpexp", dataId)
+
+wcs = butler.get("warpexp.wcs", dataId)
+\end{verbatim}
+\end{small}
+\end{quote}
+
 \section{Header Translation}
 
 In order to be able to ingest instrument data into a Butler repository the Butler has to understand some properties of the instrument including filters, detector information, and how to extract data units from data headers.
@@ -110,6 +127,20 @@ We have written a separate Python package, obs\_metadata, to support header tran
 New translators must be written to allow the Butler to understand data during ingest.
 Currently translators exist for DECam, CFHT MegaPrime, and SuprimeCam and Hyper-SuprimeCam from Subaru.
 This package solely depends on Astropy and does not need any LSST infrastructure.
+
+\begin{quote}
+\begin{small}
+\begin{verbatim}
+from astropy.io import fits
+from lsst.obs.metadata import ObservationInfo
+
+hdul = fits.open("hsc.fits")
+obsInfo = ObservationInfo(hdul[0].header)
+print(f"instrument={obsInfo.instrument}, "
+      f"date-obs={obsInfo.datetime_begin}")
+\end{verbatim}
+\end{small}
+\end{quote}
 
 \section{Summary}
 
