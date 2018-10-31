@@ -83,11 +83,10 @@ Michelle~Gower$^4$
 
 \begin{abstract}
   Writing generic data processing pipelines requires that the algorithmic code does not ever have to know about data formats of files, or the locations of those files.
-  At LSST we have a software system known as ``the Butler,'' that abstracts these details from the software developer.
+  At LSST we have a software system known as ``the Data Butler,'' that abstracts these details from the software developer.
   Scientists can specify the dataset they want in terms they understand, such as filter, observation id, date of observation, and instrument name, and the Butler translates that to one or more files which are read and returned to them as a single Python object.
-  Conversely, once they have finished processing the dataset they can give it back to the Butler, with a label describing its new status, and the butler can write it in whatever format it has been configured to use.
-  The Butler system is not LSST-specific and is entirely driven by external configuration to suit a specific use case.
-  In this paper we describe the core features of the Butler and the associated architecture.
+  Conversely, once they have created a new dataset they can give it back to the Butler, with a label describing its new status, and the Butler can write it in whatever format it has been configured to use.
+  All configuration is in YAML and supports standard defaults whilst allowing overrides.
 \end{abstract}
 
 \section{Introduction}
@@ -95,13 +94,14 @@ Michelle~Gower$^4$
 \section{Butler Components}
 
 The Butler consists of  three core components: Schema, Registry access, and Datastore.
-The schema defines the data model for relating datasets to each other.
+The Schema defines the data model for relating datasets to each other, and is defined consistently for all datasets.
 This allows you to ask which datasets do I need to calibrate this one, or which datasets were taken with this filter between these dates.
-The registry classes allow the data model to be queried and are configurable via plugins to allow different backend representations of the data.
+The Registry classes allow the data model to be queried and are configurable via plugins to allow different backend representations of the data.
 Finally the Datastore deals with the reading and writing of datasets themselves.
 There are datastores for a POSIX file system, an in-memory cache, and chained datastores (where writes go to all datastores and reads pull from the first datastore to return it).
 We intend to soon add support for object stores.
-To support the datastores ``Formatters'' have to be written to serialize and deserialize Python objects.
+To support the Datastores ``Formatters'' have to be written to serialize and deserialize Python objects.
+
 
 \section{Data Model}
 
@@ -111,10 +111,13 @@ These are used to easily get an answer to the question of which datasets should 
 
 \section{Using the Butler}
 
-The Butler maps a Python object to a serialization format through a ``StorageClass'' defined in the YAML configuration files.
+Individual pipeline tasks  work with Python objects.
+They put datasets and retrieve datasets from the Datastores.
+The Butler maps a Python object  to  a serialization format through a ``StorageClass'' defined in the YAML configuration files.
 Changing the serialization format from FITS to HDF5 does not require any code changes for the user.
-Below is some user code for retrieving a calibrated exposure of an HSC observation, modifying it, and then storing a new version with a different dataset type name.
-Pre-defined components, such as the WCS solution, can be retrieved without reading the full dataset if supported by the formatter.
+Pre-defined components of a dataset, such as the WCS solution, can be retrieved without reading the full dataset if supported by the formatter.
+
+Below is some user code for retrieving a calibrated exposure of an HSC observation, transforming it, and then storing a new version with a different dataset type name.
 
 \begin{quote}
 \begin{small}
@@ -135,8 +138,8 @@ wcs = butler.get("warpexp.wcs", dataId)
 
 \section{Header Translation}
 
-In order to be able to ingest instrument data into a Butler repository the Butler has to understand some properties of the instrument including filters, detector information, and how to extract data units from data headers.
-We have written a separate Python package, obs\_metadata, to support header translation and metadata extraction for astronomical instrument headers.
+In order to be able to ingest instrument data into a Butler repository the Butler has to understand some properties of the instrument including filters, detector information, and how to extract metadata from data headers.
+We have written a separate Python package, \texttt{astro\_metadata\_translator}, to support header translation and metadata extraction  for astronomical instrument headers.
 New translators must be written to allow the Butler to understand data during ingest.
 Currently translators exist for DECam, CFHT MegaPrime, and SuprimeCam and Hyper-SuprimeCam from Subaru.
 This package solely depends on Astropy and does not need any LSST infrastructure.
@@ -156,6 +159,11 @@ print(f"instrument={obsInfo.instrument}, "
 \end{quote}
 
 \section{Summary}
+
+The Butler frees you from the worry of file formats and file systems when your main concern is processing and characterizing datasets.
+The Butler system is not LSST-specific and is entirely driven by external configuration to suit a specific use case.
+The Butler will be released at the end of 2018 alongside v17.0 of the LSST Science Pipelines.
+
 
 \acknowledgements This material is based upon work supported in part by the National Science Foundation through Cooperative Agreement 1258333 managed by the Association of Universities for Research in Astronomy (AURA), and the Department of Energy under Contract No. DE-AC02-76SF00515 with the SLAC National Accelerator Laboratory.
 Additional LSST funding comes from private donations, grants to universities, and in-kind support from LSSTC Institutional Members.
