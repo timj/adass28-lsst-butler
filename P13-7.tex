@@ -57,7 +57,7 @@ Michelle~Gower$^4$
 \affil{$^1$Large Synoptic Survey Telescope, Tucson, AZ, USA; \email{tjenness@lsst.org}}
 \affil{$^2$Princeton University, Princeton, NJ, USA}
 \affil{$^3$SLAC National Laboratory, Menlo Park, CA, USA}
-\affil{$^4$National Center for Supercomputing Applications, Urbana, IL, USA}
+\affil{$^4$National Center for Supercomputing Applications, University of Illinois, Urbana-Champaign, IL, USA}
 }
 
 % This section is for ADS Processing.  There must be one line per author.
@@ -100,11 +100,11 @@ The Butler is the system mediating the storage and retrieval of data, converting
 
 The Butler consists of  three core components: Schema, Registry access, and Datastore.
 The relationship of these components is shown in Fig.~\ref{fig:butler}.
-The Schema defines the data model for relating datasets to each other, and is defined consistently for all datasets.
-This allows you to ask which datasets do I need to calibrate this one, or which datasets were taken with this filter between these dates.
+The Schema defines the data model for relating datasets to each other and is defined consistently for all datasets.
+This allows you to ask which datasets are needed to calibrate this one, or which datasets were taken with this filter between these dates.
 The Registry classes allow the data model to be queried and are configurable via plugins to allow different backend representations of the data.
 Finally the Datastore deals with the reading and writing of datasets themselves.
-There are datastores for a POSIX file system, an in-memory cache, and chained datastores (where writes go to all datastores and reads pull from the first datastore to return it), and we intend to soon add support for object stores.
+There are datastores for a POSIX file system, an in-memory cache, and chained datastores (where writes go to all datastores and reads pull from the first datastore to return it), and we intend to add support for object stores.
 To support the Datastores ``Formatters'' have to be written to serialize and deserialize Python objects.
 
 
@@ -112,7 +112,7 @@ To support the Datastores ``Formatters'' have to be written to serialize and des
 
 \section{Data Model}
 
-The Butler data model is designed to understand the relationships between observations and calibrations, but also the how the sky can be segmented into different regions.
+The Butler data model is designed to understand the relationships between observations and calibrations, and also how the sky can be segmented into different regions.
 Each observation is linked to corresponding patches on the sky map.
 These are used to easily get an answer to the question of which datasets should be included for a coadd of a particular sky region.
 We are designing the Schema to be generally applicable and we are taking into account that we would like to map our schema to ObsCore \citep{2017ivoa.spec.0509L} and CAOM-2 \citep{2012ASPC..461..339D} data models in the future.
@@ -147,11 +147,11 @@ wcs = butler.get("warpexp.wcs", dataId)
 
 \section{Header Translation}
 
-In order to be able to ingest instrument data into a Butler repository the Butler has to understand some properties of the instrument including filters, detector information, and how to extract metadata from data headers.
+To be able to ingest instrument data into a Butler repository, the Butler has to understand some properties of the instrument including filters, detector information, and how to extract metadata from data headers.
 We have written a separate Python package, \texttt{astro\_metadata\_translator},\footnote{\url{https://github.com/lsst/astro_metadata_translator}} to support header translation and metadata extraction for astronomical instrument headers.
 The design of this new package has been influenced by the header translator written for ORAC-DR \citep{2015A&C.....9...40J} and unifies the translation systems previously in use at LSST.
 New translators must be written to allow the Butler to understand data during ingest.
-Currently translators exist for DECam, CFHT MegaPrime, and SuprimeCam and Hyper-SuprimeCam from Subaru.
+Currently, translators exist for DECam, CFHT MegaPrime, and SuprimeCam and Hyper-SuprimeCam from Subaru, with support for LSST test data being added as needed.
 This package solely depends on Astropy \citep{2018AJ....156..123A} and does not need any LSST infrastructure.
 
 \begin{quote}
