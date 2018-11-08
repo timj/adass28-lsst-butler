@@ -15,11 +15,11 @@ P = P13-7
                     # for testing; comment this line for your production version
 # P = ADASS_template
                     # keep incrementing this after each upload of your $(P)
-V = 1
+V = 2
 
 #  variables for authors (comment out the ones you don't need)
 # FIGS = P1-2_f1.eps   P1-2_f2.eps
-FIGS =
+FIGS = P13-7_f1.eps
 # FIGS = example.eps
 
 #  variables for editors (don't modify, for export, not authors)
