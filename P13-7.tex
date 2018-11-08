@@ -66,7 +66,7 @@ Michelle~Gower$^4$
 \paperauthor{Pim~Schellart}{}{0000-0002-8324-0880}{Princeton University}{Department of Astrophysical Sciences}{Princeton}{NJ}{08544}{U.S.A.}
 \paperauthor{Kian-Tat~Lim}{ktl@slac.stanford.edu}{0000-0002-6338-6516}{SLAC}{}{Menlo Park}{CA}{94025}{U.S.A.}
 \paperauthor{Andrei~Salnikov}{salnikov@slac.stanford.edu}{0000-0002-3623-0161}{SLAC}{}{Menlo Park}{CA}{94025}{U.S.A.}
-\paperauthor{Michelle~Gower}{mgower@illinois.edu}{0000-0001-9513-6987}{NCSA}{}{Urbana}{IL}{61801}{U.S.A.}
+\paperauthor{Michelle~Gower}{mgower@illinois.edu}{0000-0001-9513-6987}{University of Illinois}{NCSA}{Urbana-Champaign}{IL}{61801}{U.S.A.}
 
 % There should be one \aindex line (commented out) for each author. These are used to
 % build up the author index for the Proceedings. The surname must come first, followed by
@@ -101,8 +101,8 @@ The Butler is the system mediating the storage and retrieval of data, converting
 The Butler consists of  three core components: Schema, Registry access, and Datastore.
 The relationship of these components is shown in Fig.~\ref{fig:butler}.
 The Schema defines the data model for relating datasets to each other and is defined consistently for all datasets.
-This allows you to ask which datasets are needed to calibrate this one, or which datasets were taken with this filter between these dates.
-The Registry classes allow the data model to be queried and are configurable via plugins to allow different backend representations of the data.
+This allows you to ask which datasets are needed to calibrate another dataset, or which datasets were taken with this filter between these dates.
+The Registry classes allow the data model to be queried and are configurable via plugins to allow different backend database systems to be used.
 Finally the Datastore deals with the reading and writing of datasets themselves.
 There are datastores for a POSIX file system, an in-memory cache, and chained datastores (where writes go to all datastores and reads pull from the first datastore to return it), and we intend to add support for object stores.
 To support the Datastores ``Formatters'' have to be written to serialize and deserialize Python objects.
@@ -115,7 +115,7 @@ To support the Datastores ``Formatters'' have to be written to serialize and des
 The Butler data model is designed to understand the relationships between observations and calibrations, and also how the sky can be segmented into different regions.
 Each observation is linked to corresponding patches on the sky map.
 These are used to easily get an answer to the question of which datasets should be included for a coadd of a particular sky region.
-We are designing the Schema to be generally applicable and we are taking into account that we would like to map our schema to ObsCore \citep{2017ivoa.spec.0509L} and CAOM-2 \citep{2012ASPC..461..339D} data models in the future.
+We are designing the Schema to be generally applicable for astronomical data and we are taking into account that we would like to map our schema to ObsCore \citep{2017ivoa.spec.0509L} and CAOM-2 \citep{2012ASPC..461..339D} data models in the future.
 
 \section{Using the Butler}
 
@@ -148,7 +148,7 @@ wcs = butler.get("warpexp.wcs", dataId)
 \section{Header Translation}
 
 To be able to ingest instrument data into a Butler repository, the Butler has to understand some properties of the instrument including filters, detector information, and how to extract metadata from data headers.
-We have written a separate Python package, \texttt{astro\_metadata\_translator},\footnote{\url{https://github.com/lsst/astro_metadata_translator}} to support header translation and metadata extraction for astronomical instrument headers.
+We have written a separate Python package, \texttt{astro\_metadata\_translator}, to support header translation and metadata extraction for astronomical instrument headers.
 The design of this new package has been influenced by the header translator written for ORAC-DR \citep{2015A&C.....9...40J} and unifies the translation systems previously in use at LSST.
 New translators must be written to allow the Butler to understand data during ingest.
 Currently, translators exist for DECam, CFHT MegaPrime, and SuprimeCam and Hyper-SuprimeCam from Subaru, with support for LSST test data being added as needed.
@@ -173,7 +173,7 @@ print(f"instrument={obsInfo.instrument}, "
 The Butler frees you from the worry of file formats and file systems when your main concern is processing and characterizing datasets.
 The Butler system is not LSST-specific, is written entirely in Python 3,\footnote{The project standard is currently Python 3.6 \citep{P9-123_adassxxvii}.} and is driven by external configuration to suit different use cases.
 The Butler will be released at the end of 2018 alongside v17.0 of the LSST Science Pipelines.
-The source code for the Butler can be found at \url{https://github.com/lsst/daf_butler}.
+The source code for the Butler can be found at \url{https://github.com/lsst/daf_butler}, and the source code for \texttt{astro\_metadata\_translator} can be found at \url{https://github.com/lsst/astro_metadata_translator}.
 
 
 \acknowledgements This material is based upon work supported in part by the National Science Foundation through Cooperative Agreement 1258333 managed by the Association of Universities for Research in Astronomy (AURA), and the Department of Energy under Contract No. DE-AC02-76SF00515 with the SLAC National Accelerator Laboratory.
