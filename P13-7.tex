@@ -56,7 +56,7 @@ and
 Michelle~Gower$^4$
 \affil{$^1$Large Synoptic Survey Telescope, Tucson, AZ, USA; \email{tjenness@lsst.org}}
 \affil{$^2$Princeton University, Princeton, NJ, USA}
-\affil{$^3$SLAC National Laboratory, Menlo Park, CA, USA}
+\affil{$^3$SLAC National Accelerator Laboratory, Menlo Park, CA, USA}
 \affil{$^4$National Center for Supercomputing Applications, University of Illinois, Urbana-Champaign, IL, USA}
 }
 
@@ -108,11 +108,11 @@ There are datastores for a POSIX file system, an in-memory cache, and chained da
 To support the Datastores ``Formatters'' have to be written to serialize and deserialize Python objects.
 
 
-\articlefigure[width=.7\textwidth]{P13-7_f1.eps}{fig:butler}{Relationship of the Butler components to science pipeline tasks.}
+\articlefigure[width=.7\textwidth]{P13-7_f1.eps}{fig:butler}{Architectural diagram of Butler components.}
 
 \section{Data Model}
 
-The Butler data model is designed to understand the relationships between observations and calibrations, and also how the sky can be segmented into different regions.
+The Butler data model is designed to reflect the relationships between observations and calibrations, and also how the sky can be segmented into different regions.
 Each observation is linked to corresponding patches on the sky map.
 These are used to easily get an answer to the question of which datasets should be included for a coadd of a particular sky region.
 We are designing the Schema to be generally applicable for astronomical data and we are taking into account that we would like to map our schema to ObsCore \citep{2017ivoa.spec.0509L} and CAOM-2 \citep{2012ASPC..461..339D} data models in the future.
