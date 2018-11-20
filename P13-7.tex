@@ -98,48 +98,59 @@ The Butler is the system mediating the storage and retrieval of data, converting
 
 \section{Butler Components}
 
-The Butler consists of  three core components: Schema, Registry access, and Datastore.
+The Butler consists of a high-level Python API, and three core components: Schema, Registry access, and Datastore.
 The relationship of these components is shown in Fig.~\ref{fig:butler}.
-The Schema defines the data model for relating datasets to each other and is defined consistently for all datasets.
-This allows you to ask which datasets are needed to calibrate another dataset, or which datasets were taken with this filter between these dates.
+The Schema defines the data model for relating datasets to each other and is defined consistently for all datasets and instruments.
 The Registry classes allow the data model to be queried and are configurable via plugins to allow different backend database systems to be used.
 Finally the Datastore deals with the reading and writing of datasets themselves.
-There are datastores for a POSIX file system, an in-memory cache, and chained datastores (where writes go to all datastores and reads pull from the first datastore to return it), and we intend to add support for object stores.
-To support the Datastores ``Formatters'' have to be written to serialize and deserialize Python objects.
+Currently there are datastores for a POSIX file system, an in-memory cache, and chained datastores (where writes go to all datastores and reads pull from the first datastore to return it).
+For example, the Datastore configuration system allows certain dataset types to be cached in memory only and not written to a file system.
+This allows pipeline tasks to be linked together using the Butler as an intermediary without always incurring a write overhead, but also allows the intermediate files to be stored whilst debugging with a small change to a configuration file and without changing any code.
+To support the Datastores, ``Formatters'' have to be written to serialize and deserialize Python objects to a variety of configurable data formats.
 
-
-\articlefigure[width=.7\textwidth]{P13-7_f1.eps}{fig:butler}{Architectural diagram of Butler components.}
+\articlefigure[width=.7\textwidth]{P13-7_f1.eps}{fig:butler}{Architectural diagram of Butler components.
+Datastores use formatters to read from and write to storage, and the registry defines a schema that can be implemented in any database system.
+An example of the API is shown in \S\ref{sec:using}.}
 
 \section{Data Model}
 
-The Butler data model is designed to reflect the relationships between observations and calibrations, and also how the sky can be segmented into different regions.
-Each observation is linked to corresponding patches on the sky map.
-These are used to easily get an answer to the question of which datasets should be included for a coadd of a particular sky region.
+The Butler data model is designed to reflect the relationships between observations and calibrations, and also how the sky can be segmented into different regions, associating each dataset with a particular sky region.
+This allows you to ask which datasets are needed to calibrate another dataset, which datasets were taken with this filter between these dates, which datasets would I need to make a coadd covering this patch of sky, or even, via provenance, asking which coadds in a particular filter had at least this number of observations contributing.
 We are designing the Schema to be generally applicable for astronomical data and we are taking into account that we would like to map our schema to ObsCore \citep{2017ivoa.spec.0509L} and CAOM-2 \citep{2012ASPC..461..339D} data models in the future.
 
 \section{Using the Butler}
+\label{sec:using}
 
 Individual pipeline tasks work with Python objects.
 They put datasets and retrieve datasets from the Datastores.
 The Butler maps a Python object  to  a serialization format through a ``StorageClass'' defined in the YAML configuration files for each Datastore.
 Changing the serialization format from FITS to HDF5 does not require any code changes for the user and is as simple as editing one line in the configuration file.
 Pre-defined components of a dataset, such as the WCS solution, can be retrieved without reading the full dataset if supported by the formatter.
+The components supported by each dataset type are defined at the StorageClass level, with code having to be written to assemble a Python composite object from the components, and to disassemble a Python object into components.
 
 Below is some user code for retrieving a calibrated exposure of an HSC observation, transforming it, and then storing a new version with a different dataset type name.
-The components supported by each dataset type are defined at the StorageClass level, with code having to be written to assemble a Python composite object from the components, and to disassemble a Python object into components.
+The example also shows that calibration datasets can be retrieved by knowing the dataset that is to be calibrated.
 
 \begin{quote}
 \begin{small}
 \begin{verbatim}
 from lsst.daf.butler import Butler
 
+# Configure a new butler
 butler = Butler("config.yaml")
 
+# Specify the requested observation via metadata
 dataId = {"instrument": "HSC", "obsid": "HSCA04090000"}
+
+# Retrieve the flatfield associated with this observation
+flat = butler.get("flat", dataId)
+
+# Get the calibrated exposure, reproject it, and store with new label.
 calibrated = butler.get("calexp", dataId)
 warped = doWarp(calibrated)
 butler.put(warped, "warpexp", dataId)
 
+# Get just the WCS without reading the full dataset
 wcs = butler.get("warpexp.wcs", dataId)
 \end{verbatim}
 \end{small}
@@ -158,7 +169,7 @@ This package solely depends on Astropy \citep{2018AJ....156..123A} and does not 
 \begin{small}
 \begin{verbatim}
 from astropy.io import fits
-from lsst.obs.metadata import ObservationInfo
+from astro_metadata_translator import ObservationInfo
 
 hdul = fits.open("hsc.fits")
 obsInfo = ObservationInfo(hdul[0].header)
@@ -173,7 +184,7 @@ print(f"instrument={obsInfo.instrument}, "
 The Butler frees you from the worry of file formats and file systems when your main concern is processing and characterizing datasets.
 The Butler system is not LSST-specific, is written entirely in Python 3,\footnote{The project standard is currently Python 3.6 \citep{P9-123_adassxxvii}.} and is driven by external configuration to suit different use cases.
 The Butler will be released at the end of 2018 alongside v17.0 of the LSST Science Pipelines.
-The source code for the Butler can be found at \url{https://github.com/lsst/daf_butler}, and the source code for \texttt{astro\_metadata\_translator} can be found at \url{https://github.com/lsst/astro_metadata_translator}.
+The source code for the Butler can be found at \url{https://github.com/lsst/daf_butler}, and the source code for the header translator can be found at \url{https://github.com/lsst/astro_metadata_translator}.
 
 
 \acknowledgements This material is based upon work supported in part by the National Science Foundation through Cooperative Agreement 1258333 managed by the Association of Universities for Research in Astronomy (AURA), and the Department of Energy under Contract No. DE-AC02-76SF00515 with the SLAC National Accelerator Laboratory.
