@@ -1,3 +1,11 @@
+P13-7.pdf
+P13-7_v?.tar.gz
+__pycache__
+## ADASS checking code
+*.py
+*.pyc
+ADASS2018_author_template
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
