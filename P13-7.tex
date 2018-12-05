@@ -144,11 +144,9 @@ butler = Butler("config.yaml")
 # Specify the requested observation via metadata
 dataId = {"instrument": "HSC", "obsid": "HSCA04090000"}
 
-# Retrieve the raw data and also associated flat
+# Retrieve the raw data, process it, and store with new label
 raw = butler.get("raw", dataId)
 flat = butler.get("flat", dataId)
-
-# Do some processing and store the result with a new label
 new = doSomething(raw, flat)
 butler.put(new, "newlabel", dataId)
 
@@ -189,7 +187,8 @@ The Butler, currently undergoing heavy development and considered to be pre-beta
 The source code for the Butler can be found at \url{https://github.com/lsst/daf_butler}, and the source code for the header translator can be found at \url{https://github.com/lsst/astro_metadata_translator}.
 
 
-\acknowledgements This material is based upon work supported in part by the National Science Foundation through Cooperative Agreement 1258333 managed by the Association of Universities for Research in Astronomy (AURA), and the Department of Energy under Contract No. DE-AC02-76SF00515 with the SLAC National Accelerator Laboratory.
+\acknowledgements We thank Simon Krughoff, Gregory Dubois-Felsmann, and Meredith Rawls for their reviews of the draft paper.
+This material is based upon work supported in part by the National Science Foundation through Cooperative Agreement 1258333 managed by the Association of Universities for Research in Astronomy (AURA), and the Department of Energy under Contract No.\ DE-AC02-76SF00515 with the SLAC National Accelerator Laboratory.
 Additional LSST funding comes from private donations, grants to universities, and in-kind support from LSSTC Institutional Members.
 
 \bibliography{P13-7}  % For BibTex
